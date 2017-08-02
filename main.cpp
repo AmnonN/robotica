@@ -121,7 +121,7 @@ if(hamster.isConnected()) {
 		deltaYaw = robot.GetDeltaYaw();
 	}
 
- 	 cout << "The Robot reached the waypoint: (" << GOAL_X << ", " << GOAL_Y << ") and our grade is 100" << endl;
+ 	 cout << "The Robot reached the waypoint: (" << GOAL_X << ", " << GOAL_Y << ")" << endl;
 }
 
 }

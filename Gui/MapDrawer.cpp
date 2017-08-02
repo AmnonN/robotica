@@ -88,7 +88,7 @@ void MapDrawer::DrawPatricles(std::vector<LocalizationParticle *>* particles)
 	std::list<LocalizationParticle*>::const_iterator iterator;
 		for (unsigned i = 0; i != particles->size(); i++) {
 			LocalizationParticle* particale = (*particles)[i];
-			if(i>particles->size() - 30)
+			if(i>particles->size() - 35)
 				MapDrawer::SetPointType(particale->x ,particale->y, GoodParticle);
 			else
 				MapDrawer::SetPointType(particale->x ,particale->y, BadParticle);
@@ -135,7 +135,16 @@ void MapDrawer::SetPointType(size_t x, size_t y, MapPointType mapPointType)
 		}
 		case(Particle) :
 		{
-		    this->SetPointColor(x, y, 0, 0, 255);
+			if ((MapDrawer::_map->at<cv::Vec3b>(x, y)[0] == 0) &&
+				(MapDrawer::_map->at<cv::Vec3b>(x, y)[1] == 0) &&
+				(MapDrawer::_map->at<cv::Vec3b>(x, y)[2] == 0))
+			{
+				this->SetPointColor(x, y, 255, 0, 0);
+			}
+			else
+			{
+				this->SetPointColor(x, y, 0, 0, 255);
+			}
 			break;
 		}
 		case(LidarScanObstacle) :
@@ -145,7 +154,16 @@ void MapDrawer::SetPointType(size_t x, size_t y, MapPointType mapPointType)
 		}
 		case(GoodParticle) :
 		{
-		    this->SetPointColor(x, y, 0, 255, 0);
+			if ((MapDrawer::_map->at<cv::Vec3b>(x, y)[0] == 0) &&
+				(MapDrawer::_map->at<cv::Vec3b>(x, y)[1] == 0) &&
+				((MapDrawer::_map->at<cv::Vec3b>(x, y)[2] == 0) || (MapDrawer::_map->at<cv::Vec3b>(x, y)[2] == 255)))
+			{
+				this->SetPointColor(x, y, 255, 0, 0);
+			}
+			else
+			{
+				this->SetPointColor(x, y, 0, 255, 0);
+			}
 			break;
 		}
 		case(BadParticle) :

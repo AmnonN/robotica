@@ -15,7 +15,10 @@ LocalizationParticle* LocalizationParticle::CreateChild(float expansionRadius, f
     float newX = this->x + Random(-expansionRadius, expansionRadius);
     float newY = this->y + Random(-expansionRadius, expansionRadius);
     float newYaw = this->yaw + Random(-yawRange, yawRange);
-    return new LocalizationParticle(newX, newY, newYaw, -1);
+
+	LocalizationParticle* newParticle = new LocalizationParticle(newX, newY, newYaw, -1);
+	newParticle->hamster = this->hamster;
+	return newParticle;
 }
 
 float LocalizationParticle::Random(float min, float max)
@@ -40,7 +43,7 @@ void LocalizationParticle::Update(float xDelta, float yDelta, float yawDelta, No
     // Calculating the belief of the particle, by using the probability by movement and laser scan.
     float predictionBelif = ProbabilityByMovement(xDelta, yDelta, yawDelta) * this->belief;
     float probabilityByScan = ProbabilityByLidarScan(*map, *amit);//manager->computeBelief(this, *lidarHandler);
-    this->belief = probabilityByScan * predictionBelif * BELIEF_NORMALIZATION_VALUE;
+    this->belief = predictionBelif * predictionBelif * BELIEF_NORMALIZATION_VALUE;
 
     // In case the belief is more than 1, put 1 instead.
     if (this->belief > 1)
@@ -76,6 +79,22 @@ float LocalizationParticle::ProbabilityByMovement(float xDelta, float yDelta, fl
 // Get the probability of this particle by using the lidar scan.
 float LocalizationParticle::ProbabilityByLidarScan(NodeMap& graph, Robot& robot)
 {
+	if (graph.getNodeAtIndex(x, y)->getIsObstacle())
+	{
+		return 0;
+	}
+
+	float x = hamster->getPose().getX() / 0.05 + 470;
+	float y = -1 * (hamster->getPose().getY() / 0.05) + 470;
+
+	float deltaX = x - this->x;
+	float deltaY = y - this->y;
+
+	float distance = sqrt((deltaX * deltaX) + (deltaY * deltaY));
+
+	return distance;
+
+#if 0
 	float totalHits = 0;
 	float correctHits = 0;
 
@@ -126,6 +145,7 @@ float LocalizationParticle::ProbabilityByLidarScan(NodeMap& graph, Robot& robot)
 		return 0;
 	else
 		return correctHits/totalHits;
+#endif
 }
 
 LocalizationParticle::LocalizationParticle(int i, int j, double x, double y, double yaw, double belief)

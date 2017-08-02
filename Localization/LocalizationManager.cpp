@@ -117,6 +117,7 @@ bool LocalizationManager::CreateParticle(float xDelta, float yDelta, float yawDe
 	if (particles.size() + childsCount < MAX_PARTICLES_COUNT)
 	{
 		LocalizationParticle* particle = new LocalizationParticle();
+		particle->hamster = this->hamster;
 		particle->manager = this;
 		particle->x = xDelta;
 		particle->y = yDelta;

@@ -5,6 +5,7 @@
 #include "../NodeMap/NodeMap.h"
 #include "LidarHandler.h"
 #include "../Robot.h"
+#include <HamsterAPIClientCPP/Hamster.h>
 
 class LocalizationManager;
 
@@ -51,6 +52,7 @@ public:
 	float ProbabilityByLidarScan(NodeMap& graph, Robot& robot);
 
 public:
+	HamsterAPI::Hamster *hamster;
 	int row, col; //the row/col index in the map
 	double x, y; //the exact place of the robot; x- place in column, y- place in row
 	double yaw; //the heading angle of the robot
