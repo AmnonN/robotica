@@ -1,7 +1,7 @@
 #include "MapDrawer.h"
 #include "../Localization/LocalizationParticle.h"
 
-MapDrawer::MapDrawer(int width, int height) : WINDOW_TITLE("Room-Map")
+MapDrawer::MapDrawer(int width, int height) : WINDOW_TITLE("Room-Map"), _goodParticlesToDraw(5)
 {
 	cv::namedWindow("Room-Map");
 	_map = new cv::Mat(width, height,CV_8UC3,cv::Scalar(0,0,0));
@@ -85,13 +85,16 @@ void MapDrawer::DrawPath(Node* goal)
 
 void MapDrawer::DrawPatricles(std::vector<LocalizationParticle *>* particles)
 {
+	_goodParticlesDrawn = 0;
 	std::list<LocalizationParticle*>::const_iterator iterator;
-		for (unsigned i = 0; i != particles->size(); i++) {
+		for (int i = particles->size() - 1; i >= 0 ; i--) {
 			LocalizationParticle* particale = (*particles)[i];
-			if(i>particles->size() - 35)
+			if(i>particles->size() - _goodParticlesToDraw)
 				MapDrawer::SetPointType(particale->x ,particale->y, GoodParticle);
 			else
 				MapDrawer::SetPointType(particale->x ,particale->y, BadParticle);
+
+	printf("good particles drawn: %d\n", _goodParticlesDrawn);
 
 	}
 }
@@ -162,13 +165,22 @@ void MapDrawer::SetPointType(size_t x, size_t y, MapPointType mapPointType)
 			}
 			else
 			{
+				++_goodParticlesDrawn;
 				this->SetPointColor(x, y, 0, 255, 0);
 			}
 			break;
 		}
 		case(BadParticle) :
 		{
-		    this->SetPointColor(x, y, 255, 0, 0);
+			if (_goodParticlesDrawn < _goodParticlesToDraw)
+			{
+				this->SetPointType(x, y, GoodParticle);
+			}
+			else
+			{
+				this->SetPointColor(x, y, 255, 0, 0);
+			}
+
 			break;
 		}
 	}

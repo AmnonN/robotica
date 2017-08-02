@@ -32,6 +32,8 @@ private:
     const string WINDOW_TITLE;
     cv::Mat* _map;
     cv::Mat _savedMapState;
+    const size_t _goodParticlesToDraw;
+    size_t _goodParticlesDrawn;
     void SetPointColor(size_t x, size_t y, int red, int green, int blue);
 };
 
