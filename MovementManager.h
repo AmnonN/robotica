@@ -13,6 +13,7 @@
 #include "Utils/AngleUtils.h"
 #include <vector>
 #include <math.h>
+#include "Localization/LocalizationManager.h"
 using namespace std;
 using namespace HamsterAPI;
 
@@ -21,8 +22,8 @@ using namespace HamsterAPI;
 class MovementManager
 {
 public:
-    MovementManager(HamsterAPI::Hamster * hamster, Robot * robot, MapDrawer* mapDrawer);
-    void NavigateToWaypoint(Node * waypoint);
+    MovementManager(HamsterAPI::Hamster * hamster, Robot * robot, MapDrawer* mapDrawer, LocalizationManager* localizationManager);
+    void NavigateToWaypoint(Node * waypoint, LidarScan& scan);
     void StopMoving() ;
     virtual ~MovementManager();
 
@@ -40,6 +41,7 @@ private:
 	clock_t navigationStartTime;
 	float wheelsAngle;
 	bool locationChanged;
+	LocalizationManager* localizationManager;
 
 	void TurnToWaypoint();
 	void MoveToWaypoint();

@@ -5,12 +5,13 @@
 #include "MapPointType.h"
 #include "../NodeMap/Node.h"
 #include "../NodeMap/NodeMap.h"
-#include "../Localization/LocalizationParticle.h"
 #include "../Utils/PositionUtils.h"
 #include "../Utils/AngleUtils.h"
 #include "opencv2/imgproc.hpp"
 using namespace HamsterAPI;
 using namespace std;
+
+class LocalizationParticle;
 
 class MapDrawer
 {
@@ -22,12 +23,15 @@ public:
 	void DrawNodeMap(NodeMap* nodeMap);
 	void DrawPath(Node* goal);
 	void Show();
+	void SaveCurrentMap();
+	void RevertToSavedMap();
 	void DrawPatricles(std::vector<LocalizationParticle *>* particles);
 	cv::Mat* getMap();
 
 private:
     const string WINDOW_TITLE;
     cv::Mat* _map;
+    cv::Mat _savedMapState;
     void SetPointColor(size_t x, size_t y, int red, int green, int blue);
 };
 

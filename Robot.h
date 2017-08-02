@@ -11,13 +11,14 @@
 #include "Gui/MapDrawer.h"
 #include "Constants.h"
 #include "Utils/AngleUtils.h"
-#include "Localization/LocalizationManager.h"
+
+class LocalizationManager;
 
 using namespace HamsterAPI;
 using namespace std;
 
 class Robot {
-private:
+public:
 	Hamster * hamster;
 	double hamsterStartX, hamsterStartY;
 	LocalizationManager * localizationManager;
@@ -33,6 +34,10 @@ public:
 	double GetDeltaYaw() const;
 	positionState GetCurrHamsterLocation();
 	void UpdateLocation();
+	Hamster* getHamster()
+	{
+		return hamster;
+	}
 	virtual ~Robot();
 };
 

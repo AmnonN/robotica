@@ -21,11 +21,12 @@
 //#define leftTurnAngle()		TURN_ANGLE
 //#define rightTurnAngle()	-TURN_ANGLE
 
-MovementManager::MovementManager(HamsterAPI::Hamster * hamster, Robot * robot, MapDrawer* mapDrawer)
+MovementManager::MovementManager(HamsterAPI::Hamster * hamster, Robot * robot, MapDrawer* mapDrawer, LocalizationManager* localizationManager)
 {
 	this->hamster = hamster;
 	this->robot = robot;
 	this->mapDrawer = mapDrawer;
+	this->localizationManager = localizationManager;
 }
 
 void MovementManager::StopMoving()
@@ -57,7 +58,7 @@ void MovementManager::calculateDestYaw(Node* waypoint)
 
 // The parameter waypoint should be according to Hamster's coordinate system
 // (in which (0,0) is at the center of the map, NOT at the top left corner)
-void MovementManager::NavigateToWaypoint(Node* waypoint)
+void MovementManager::NavigateToWaypoint(Node* waypoint, LidarScan& scan)
 {
 	this->waypoint = waypoint;
 	currLocation = robot->GetCurrHamsterLocation();
@@ -93,6 +94,11 @@ void MovementManager::NavigateToWaypoint(Node* waypoint)
 
 			MoveToWaypoint();
 		}
+
+		localizationManager->BestParticle(&scan, -1 * (hamster->getPose().getY() / 0.05) + 470, hamster->getPose().getX() / 0.05 + 470);
+
+		mapDrawer->RevertToSavedMap();
+		mapDrawer->DrawPatricles(&(localizationManager->particles));
 
 		RecalculateDistanceFromWaypoint();
 		isWaypointReached = distanceFromWaypoint <= DISTANCE_FROM_WAYPOINT_TOLERANCE;
@@ -197,6 +203,8 @@ double MovementManager::GetAdjustedYaw(double yawToAdjust) const
 	{
 		return yawToAdjust - 360;
 	}
+
+	return yawToAdjust;
 }
 
 void MovementManager::RecalculateDistanceFromWaypoint()

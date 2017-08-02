@@ -29,7 +29,7 @@ void NodeMap::loadMap(cv::Mat* map)
 	size_t mapWidth = map->cols;
 	size_t mapHeight = map->rows;
 
-	vector<vector<Node*>> matrix(mapWidth, vector<Node*>(mapHeight));
+	vector<vector<Node*> > matrix(mapWidth, vector<Node*>(mapHeight));
 
 	for (size_t y = 0; y < mapHeight; y++)
 	{
@@ -174,4 +174,10 @@ rectangle NodeMap::getCurrentRectangle(int blowRange, unsigned currX, unsigned c
 
 	return result;
 }
+
+bool NodeMap::IsCellObstacle(float x, float y) const
+{
+	return (getNodeAtIndex(x, y)->getIsObstacle());
+}
+
 

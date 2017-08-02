@@ -1,4 +1,5 @@
 #include "MapDrawer.h"
+#include "../Localization/LocalizationParticle.h"
 
 MapDrawer::MapDrawer(int width, int height) : WINDOW_TITLE("Room-Map")
 {
@@ -88,9 +89,9 @@ void MapDrawer::DrawPatricles(std::vector<LocalizationParticle *>* particles)
 		for (unsigned i = 0; i != particles->size(); i++) {
 			LocalizationParticle* particale = (*particles)[i];
 			if(i>particles->size() - 30)
-				MapDrawer::SetPointType(particale->row ,particale->col, GoodParticle);
+				MapDrawer::SetPointType(particale->x ,particale->y, GoodParticle);
 			else
-				MapDrawer::SetPointType(particale->row ,particale->col, BadParticle);
+				MapDrawer::SetPointType(particale->x ,particale->y, BadParticle);
 
 	}
 }
@@ -174,6 +175,16 @@ void MapDrawer::Show()
 
 	cv::imshow(MapDrawer::WINDOW_TITLE, resultMap);
 	cv::waitKey(100);
+}
+
+void MapDrawer::SaveCurrentMap()
+{
+	this->_savedMapState = this->_map->clone();
+}
+
+void MapDrawer::RevertToSavedMap()
+{
+	*(this->_map) = this->_savedMapState.clone();
 }
 
 cv::Mat* MapDrawer::getMap()

@@ -73,25 +73,27 @@ void startRobotAction()
  mapDrawer.DrawMap(&roomRealMapFromMemory, MAP_ROTATION);
  mapDrawer.DrawNodeMap(&roomBlownMap);
  mapDrawer.DrawPath(goalPos);
+ mapDrawer.SaveCurrentMap();
 
  Pose robotStartPose = hamster.getPose();
  struct position startPosition = {.x =
 		 ROBOT_START_X + robotStartPose.getX(), .y = ROBOT_START_Y -  robotStartPose.getX()};\
  struct positionState startPositionState = {.pos = startPosition, .yaw = robotStartPose.getHeading()};
 
- LocalizationManager* localizationManager = new LocalizationManager(&roomRealMapFromMemory, &hamster);
+ LocalizationManager* localizationManager = new LocalizationManager(&roomRealMapFromMemory, &hamster, NULL, &roomBlownMap);
 
  double mapResolution = roomRealMapFromMemory.getResolution();
  int inflationFac = ROBOT_SIZE / 2 / (roomRealMapFromMemory.getResolution() * 100);
 
  Robot robot(&hamster,localizationManager, inflationFac, mapResolution);
+ localizationManager->robot = &robot;
 
+MovementManager movementManager(&hamster, &robot, &mapDrawer, localizationManager);
 
-
- localizationManager->InitParticalesOnMap(&startPositionState);
-
-MovementManager movementManager(&hamster, &robot, &mapDrawer);
-
+// TODO : Check this later
+float deltaX = robot.GetDeltaX();
+float deltaY = robot.GetDeltaY();
+float deltaYaw = robot.GetDeltaYaw();
 
 if(hamster.isConnected()) {
  for (std::list<Node*>::reverse_iterator iter = waypoints.rbegin(); iter != waypoints.rend(); ++iter)
@@ -109,8 +111,14 @@ if(hamster.isConnected()) {
 		}
 		else
 		{
-			movementManager.NavigateToWaypoint(&hamsterWaypoint);
+			LidarScan lidar = hamster.getLidarScan();
+			localizationManager->Update(deltaX, deltaY, deltaYaw, &lidar, &roomBlownMap);
+			movementManager.NavigateToWaypoint(&hamsterWaypoint, lidar);
 		}
+
+		deltaX = robot.GetDeltaX();
+		deltaY = robot.GetDeltaY();
+		deltaYaw = robot.GetDeltaYaw();
 	}
 
  	 cout << "The Robot reached the waypoint: (" << GOAL_X << ", " << GOAL_Y << ") and our grade is 100" << endl;

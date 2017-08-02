@@ -14,7 +14,7 @@ using namespace HamsterAPI;
 class NodeMap
 {
 	private:
-		vector<vector<Node*>> _matrix;
+		vector<vector<Node*> > _matrix;
 		int calculateBlowRange(double robotSizeCm, double resolutionCm);
 		rectangle getCurrentRectangle(int blowRange, unsigned currX, unsigned currY, unsigned width, unsigned height);
 
@@ -29,6 +29,7 @@ class NodeMap
 		bool isAreaAnObstacle(int colIndex, int rowIndex, int resolution) const;
 		void colorArea(unsigned width, unsigned height,
 				struct position pos, int r, int g, int b);
+		bool IsCellObstacle(float x, float y) const;
 		NodeMap();
 		virtual ~NodeMap();
 };

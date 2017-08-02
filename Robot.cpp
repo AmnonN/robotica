@@ -1,4 +1,5 @@
 #include "Robot.h"
+#include "Localization/LocalizationManager.h"
 
 Robot::Robot(Hamster * hamster,
 		LocalizationManager * localizationManager,

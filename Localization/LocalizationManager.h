@@ -7,6 +7,8 @@
 #include <HamsterAPIClientCPP/Hamster.h>
 #include "../Constants.h"
 #include "../Structs.h"
+#include "LidarHandler.h"
+#include "../NodeMap/NodeMap.h"
 #define NUM_OF_PARTICALES 350
 #define TRY_TO_BACK 20
 #define TOP_PARTICALES 80
@@ -17,12 +19,35 @@ using namespace std;
 using namespace HamsterAPI;
 
 //this class manage all the particals in the map
-class LocalizationManager {
+class LocalizationManager
+{
+public:
+	void Update(float deltaX, float deltaY, float deltaYaw, LidarScan* lidarHandler, NodeMap* map);
+	LocalizationParticle* BestParticle(LidarScan* lidar, float x, float y);
+	bool CreateParticle(float xDelta, float yDelta, float yawDelta, float belief);
+	bool CreateParticle(float xDelta, float yDelta, float yawDelta, float belief, float expansionRadius, float yawRange, int childsCount);
+	void DuplicateParticle(LocalizationParticle* particle, int childCount, vector<LocalizationParticle*>& childs);
+	void DuplicateParticle(LocalizationParticle* particle, int childCount, float expansionRadius, float yawRange, vector<LocalizationParticle*>& childs);
+	void ChildsToParticles(vector<LocalizationParticle*> childs);
 
-private:
-
-	Hamster *hamster;
 	vector<LocalizationParticle *> particles;
+
+
+
+
+
+
+
+
+
+
+
+
+public:
+	NodeMap* map;
+	Robot* robot;
+	Hamster *hamster;
+	//vector<LocalizationParticle *> particles;
 
 
 	//return back the particales which out of the free cells range to free cells range
@@ -48,13 +73,14 @@ private:
 	void calculateYaw(LocalizationParticle* p, double deltaYaw);
 	void calculatePositionOnMap(LocalizationParticle* p);
 	void replaceBadOutOfRangeParticle(LocalizationParticle* p, int size);
+	double computeBelief(LocalizationParticle *particle, LidarScan& scan);
 
 public:
 
 	OccupancyGrid *ogrid;
 
 	//constructor
-	LocalizationManager( OccupancyGrid *ogrid, Hamster *hamster);
+	LocalizationManager( OccupancyGrid *ogrid, Hamster *hamster, Robot* amnon, NodeMap* map);
 
 	//getter
 	vector<LocalizationParticle *>* getParticles();

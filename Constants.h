@@ -21,6 +21,8 @@
 #define ROBOT_START_Y 470
 #define GOAL_X 650
 #define GOAL_Y 500
+#define LIDAR_SCOPE 240
+#define LIDAR_COUNT 666
 
 // Laser
 //#define LASER_SAMPLES_NUM 666
